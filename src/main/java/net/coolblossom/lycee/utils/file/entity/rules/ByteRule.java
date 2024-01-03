@@ -6,7 +6,7 @@ public class ByteRule implements DataFileRule<Byte> {
 
     @Override
     public Byte read(String column) {
-        if (column == null || column.length() == 0) {
+        if (column == null || column.isEmpty()) {
             return 0;
         }
         return Byte.parseByte(column);

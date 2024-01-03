@@ -6,7 +6,7 @@ public class CharacterRule implements DataFileRule<Character> {
 
     @Override
     public Character read(String column) {
-        if (column == null || column.length()==0){
+        if (column == null || column.isEmpty()){
             return 0;
         } else {
             return column.charAt(0);

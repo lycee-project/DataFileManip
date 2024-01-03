@@ -6,8 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class SetterBinder implements FieldBinder {
-    Method setterMethod;
-    DataFileRule<?> rule;
+    private final Method setterMethod;
+    private final DataFileRule<?> rule;
 
     public SetterBinder(Method target, DataFileRule<?> rule) {
         this.setterMethod = target;

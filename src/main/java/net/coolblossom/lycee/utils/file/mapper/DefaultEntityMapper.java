@@ -35,33 +35,7 @@ public class DefaultEntityMapper<T> implements RecordMapper<T> {
             throw new RecordMappingFailure(e);
         }
 
-        Field[] fields = target.getDeclaredFields();
-        for (Field field : fields) {
-            Column col = field.getAnnotation(Column.class);
-
-            final String name;
-            if (col != null && col.name().length() > 0) {
-                name = col.name();
-            } else {
-                name = field.getName();
-            }
-
-            if (!fs.has(name)) {
-                continue;
-            }
-            try {
-                if (field.getType().equals(String.class)) {
-                    field.set(entity, fs.getString(name));
-                } else if (field.getType().equals(int.class)) {
-                    field.setInt(entity, fs.getInt(name));
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-
+        desc.bind(fs, entity);
         return entity;
     }
 }

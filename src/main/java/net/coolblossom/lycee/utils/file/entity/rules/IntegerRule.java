@@ -5,7 +5,7 @@ import net.coolblossom.lycee.utils.file.entity.DataFileRule;
 public class IntegerRule implements DataFileRule<Integer> {
     @Override
     public Integer read(String column) {
-        if (column == null || column.length() == 0) {
+        if (column == null || column.isEmpty()) {
             return 0;
         } else {
             return Integer.parseInt(column);

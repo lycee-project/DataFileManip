@@ -4,6 +4,7 @@ import net.coolblossom.lycee.utils.file.entity.bind.DirectFieldBinder;
 import net.coolblossom.lycee.utils.file.entity.bind.FieldBinder;
 import net.coolblossom.lycee.utils.file.entity.bind.SetterBinder;
 import net.coolblossom.lycee.utils.file.entity.rules.*;
+import net.coolblossom.lycee.utils.file.exceptions.InvalidRecordException;
 import net.coolblossom.lycee.utils.file.exceptions.RecordMappingFailure;
 import net.coolblossom.lycee.utils.file.mapper.FieldSet;
 
@@ -25,7 +26,7 @@ public class EntityDesc {
     // name="alice"を渡したら，Info#nameに"alice"と登録され，
     // age="19"を渡したら，Info#ageに19と登録される
     //
-    private Map<String, FieldBinder> binderList;
+    private final Map<String, FieldBinder> binderList;
 
     public EntityDesc(Class<?> clazz) throws NoSuchMethodException {
         binderList = new HashMap<>();
@@ -87,8 +88,18 @@ public class EntityDesc {
 
     }
 
-    void bind(FieldSet fieldSet) {
-
+    public void bind(FieldSet fieldSet, Object target) {
+        for (Map.Entry<String, FieldBinder> e : binderList.entrySet()) {
+            String name = e.getKey();
+            FieldBinder binder = e.getValue();
+            if (fieldSet.has(name)) {
+                try {
+                    binder.bind(target, fieldSet.getString(name));
+                } catch (InvocationTargetException | IllegalAccessException ex) {
+                    throw new InvalidRecordException(ex);
+                }
+            }
+        }
     }
 
 
@@ -106,12 +117,5 @@ public class EntityDesc {
             throw new RecordMappingFailure(e);
         }
     }
-
-
-    void bind(Object target, String name, String value) {
-
-
-    }
-
 
 }

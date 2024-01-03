@@ -1,5 +1,7 @@
 package net.coolblossom.lycee.utils.file.entity;
 
+import net.coolblossom.lycee.utils.file.exceptions.InvalidRecordException;
+
 /**
  * 入出力時のデータ変換定義
  * @param <T> 対象クラス
@@ -10,7 +12,7 @@ public interface DataFileRule<T> {
      * @param column 読み込むデータ文字列
      * @return 読み込んだ時のインスタンス
      */
-    T read(String column);
+    T read(String column) throws InvalidRecordException;
 
     /**
      * 書き出しルール

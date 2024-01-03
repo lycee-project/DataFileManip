@@ -8,12 +8,12 @@ import java.nio.file.Path;
 public class CrlfRecordReader
         implements RecordReader
 {
-    private static char CR = '\r';
-    private static char LF = '\n';
-    private static int EOF = -1;
+    private static final char CR = '\r';
+    private static final char LF = '\n';
+    private static final int EOF = -1;
 
-    private BufferedReader reader;
-    private DataFileConfig config;
+    private final BufferedReader reader;
+    private final DataFileConfig config;
 
     public CrlfRecordReader(DataFileConfig config, Path path) throws IOException {
         this.reader = Files.newBufferedReader(path, config.getEncoding());
@@ -53,7 +53,7 @@ public class CrlfRecordReader
             }
         }
 
-        if (buffer.length() == 0) return null;
+        if (buffer.isEmpty()) return null;
         return buffer.toString();
     }
 

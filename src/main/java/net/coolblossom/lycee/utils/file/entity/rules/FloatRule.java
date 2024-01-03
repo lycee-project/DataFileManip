@@ -5,7 +5,7 @@ import net.coolblossom.lycee.utils.file.entity.DataFileRule;
 public class FloatRule implements DataFileRule<Float> {
     @Override
     public Float read(String column) {
-        if (column == null || column.length() == 0) {
+        if (column == null || column.isEmpty()) {
             return 0.0f;
         } else {
             return Float.parseFloat(column);

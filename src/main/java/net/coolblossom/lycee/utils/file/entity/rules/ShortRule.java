@@ -6,7 +6,7 @@ public class ShortRule implements DataFileRule<Short> {
 
     @Override
     public Short read(String column) {
-        if (column == null || column.length() == 0) {
+        if (column == null || column.isEmpty()) {
             return 0;
         } else {
             return Short.parseShort(column);

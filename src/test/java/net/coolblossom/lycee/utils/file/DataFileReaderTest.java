@@ -1,78 +1,140 @@
 package net.coolblossom.lycee.utils.file;
 
+import lombok.Data;
+import net.coolblossom.lycee.utils.file.entity.Column;
+import net.coolblossom.lycee.utils.file.entity.DataFileRule;
+import net.coolblossom.lycee.utils.file.exceptions.InvalidRecordException;
+import net.coolblossom.lycee.utils.file.exceptions.RecordMappingFailure;
 import net.coolblossom.lycee.utils.file.manip.DataFileConfig;
-import net.coolblossom.lycee.utils.file.entity.*;
 import net.coolblossom.lycee.utils.file.manip.DataFileReader;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.awt.*;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class DataFileReaderTest {
 
-    public static class UserInfo {
-        @Column(name = "user_id")
-        public String userId;
-        @Column(name = "user_name")
-        public String userName;
-        public int age;
+    public enum Gender {
+        Male,
+        Female
+    }
+
+    public enum UserRank {
+        Bronze(1),
+        Silver(2),
+        Gold(3),
+        Platinum(4)
+        ;
+
+        private final int rankCode;
+
+        private UserRank(int rankCode) {
+            this.rankCode = rankCode;
+        }
+        public static class UserRankRule implements DataFileRule<UserRank> {
+
+            @Override
+            public UserRank read(String column) {
+                return Arrays.stream(UserRank.values())
+                        .filter(e -> String.valueOf(e.rankCode).equals(column))
+                        .findFirst()
+                        .orElseThrow(InvalidRecordException::new);
+            }
+
+            @Override
+            public String write(UserRank data) {
+                return String.valueOf(data.rankCode);
+            }
+        }
+    }
+
+    public static class UserPoint {
+        private final long point;
+
+        public UserPoint(long pt) {
+            this.point = pt;
+        }
+
+        public long toLong() {
+            return point;
+        }
 
         @Override
         public String toString() {
-            return "UserInfo{" +
-                    "userId='" + userId + '\'' +
-                    ", userName='" + userName + '\'' +
-                    ", age='" + age + '\'' +
-                    '}';
+            return String.valueOf(point);
         }
-    }
 
-    @Test
-    public void test() throws Exception {
-        DataFileConfig config = DataFileConfig.create();
+        public static class UserPointRule implements DataFileRule<UserPoint> {
 
-        try (DataFileReader<UserInfo> reader = DataFileReader.create(config, "test.csv", UserInfo.class)) {
-            reader.forEach(data -> {
-                assertThat(data).isNotNull();
-            });
-        }
-    }
-
-    @Test
-    public void test_iterate() throws Exception {
-        DataFileConfig config = DataFileConfig.create()
-                .fieldSeparator(',')
-                .fieldWrap('\"', false);
-        String filename = "src/test/resources/test.csv";
-        try (DataFileReader<UserInfo> reader = DataFileReader.create(config, filename, UserInfo.class)) {
-            for (UserInfo entity: reader) {
-                System.out.println(entity);
-            }
-        }
-    }
-
-    @Test
-    public void test_ready() throws IOException {
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get("src/test/resources/test.csv"))) {
-            while(true) {
-                boolean isReady = reader.ready();
-                int value = reader.read();
-
-                System.out.printf("%b - %c\n", isReady, (char)value);
-
-                if(value == -1) {
-                    break;
+            @Override
+            public UserPoint read(String column) throws InvalidRecordException {
+                try {
+                    return new UserPoint(Long.parseLong(column));
+                } catch (NumberFormatException nfe) {
+                    throw new InvalidRecordException(nfe);
                 }
             }
 
+            @Override
+            public String write(UserPoint data) {
+                return data.toString();
+            }
         }
+    }
 
+    @Data
+    public static class TestRecord {
+        // プリミティブ型
+        @Column(order = 1)
+        private int recordNum;
+
+        // ボクシング
+        @Column(order = 2)
+        private Integer userId;
+
+        // 標準オブジェクト型
+        @Column(order = 3)
+        private String userName;
+
+        // enum
+        @Column(order = 4)
+        private Gender gender;
+
+        // ルールありenum
+        @Column(order = 5, rule = UserRank.UserRankRule.class)
+        private UserRank rank;
+
+        // ユーザ定義
+        @Column(order = 6, rule = UserPoint.UserPointRule.class)
+        private UserPoint point;
 
     }
+
+
+    @Test
+    public void test_csv () throws Exception {
+        DataFileConfig csvConfig = DataFileConfig.create()
+                .lineSeparator("\r\n")
+                .hasHeader(true)
+                .fieldSeparator(',')
+                .fieldWrap('\"', false)
+                .invalidRecord(DataFileConfig.Record.Skip)
+                ;
+
+        String filePath = "src/test/resources/users.csv";
+
+        try (DataFileReader<TestRecord> reader = DataFileReader.create(csvConfig, filePath, TestRecord.class)) {
+            reader.forEach(rec -> {
+                System.out.println(rec);
+            });
+        }
+
+    }
+
+
+
 
 }

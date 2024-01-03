@@ -3,10 +3,11 @@ package net.coolblossom.lycee.utils.file.entity.rules;
 import net.coolblossom.lycee.utils.file.entity.DataFileRule;
 
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Optional;
 
 public class EnumRule implements DataFileRule<Object> {
-    private Class<?> type;
+    private final Class<?> type;
 
     public EnumRule(Class<?> type) {
         this.type = type;

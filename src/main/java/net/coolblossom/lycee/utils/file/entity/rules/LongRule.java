@@ -5,7 +5,7 @@ import net.coolblossom.lycee.utils.file.entity.DataFileRule;
 public class LongRule implements DataFileRule<Long> {
     @Override
     public Long read(String column) {
-        if (column == null || column.length() == 0) {
+        if (column == null || column.isEmpty()) {
             return 0L;
         } else {
             return Long.parseLong(column);
