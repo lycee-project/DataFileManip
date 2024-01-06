@@ -1,6 +1,6 @@
 package net.coolblossom.lycee.utils.file.exceptions;
 
-public class RecordMappingFailure extends RuntimeException {
+public class RecordMappingFailure extends DataFileException {
 
     public RecordMappingFailure(String message) {
         super(message);

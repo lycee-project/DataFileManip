@@ -14,26 +14,26 @@ public class DataFileConfig {
     /**
      * ファイル情報
      */
-    private Charset enc = Charset.defaultCharset();
-    private boolean useHdrRecycle = true;
+    private Charset encoding = Charset.defaultCharset();
+    private boolean hasHeader = true;
     private String lineSeparator = System.getProperty("line.separator");
 
     public DataFileConfig encoding(String charsetName) {
-        this.enc = Charset.forName(charsetName);
+        this.encoding = Charset.forName(charsetName);
         return this;
     }
 
-    public Charset getEncoding() {
-        return enc;
+    public Charset encoding() {
+        return encoding;
     }
 
     public DataFileConfig hasHeader(boolean use) {
-        this.useHdrRecycle = use;
+        this.hasHeader = use;
         return this;
     }
 
     public boolean hasHeader() {
-        return this.useHdrRecycle;
+        return this.hasHeader;
     }
 
     public DataFileConfig lineSeparator(String separatorChar) {
@@ -45,29 +45,29 @@ public class DataFileConfig {
     /**
      * フィールド情報
      */
-    private char fldSeparator = '\t';
-    private char fldWrapCharacter = '\"';
-    private boolean fldWrapAlways = false;
+    private char fieldSeparator = '\t';
+    private char fieldWrapCharacter = '\"';
+    private boolean fieldWrapAlways = false;
 
     public DataFileConfig fieldSeparator(char ch) {
-        this.fldSeparator = ch;
+        this.fieldSeparator = ch;
         return this;
     }
     public char fieldSeparator() {
-        return this.fldSeparator;
+        return this.fieldSeparator;
     }
 
     public DataFileConfig fieldWrap(char ch, boolean isAlways) {
-        this.fldWrapCharacter = ch;
-        this.fldWrapAlways = isAlways;
+        this.fieldWrapCharacter = ch;
+        this.fieldWrapAlways = isAlways;
         return this;
     }
     public char fieldWrapChar() {
-        return this.fldWrapCharacter;
+        return this.fieldWrapCharacter;
     }
 
-    public boolean isFieldWrapAlways() {
-        return this.fldWrapAlways;
+    public boolean fieldWrapAlways() {
+        return this.fieldWrapAlways;
     }
 
     /**
@@ -78,7 +78,7 @@ public class DataFileConfig {
         Null,
         Exception
     }
-    Record mode = Record.Exception;
+    private Record mode = Record.Exception;
 
     public DataFileConfig invalidRecord(Record mode) {
         this.mode = mode;

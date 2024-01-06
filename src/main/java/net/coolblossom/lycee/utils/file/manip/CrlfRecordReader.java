@@ -16,7 +16,7 @@ public class CrlfRecordReader
     private final DataFileConfig config;
 
     public CrlfRecordReader(DataFileConfig config, Path path) throws IOException {
-        this.reader = Files.newBufferedReader(path, config.getEncoding());
+        this.reader = Files.newBufferedReader(path, config.encoding());
         this.config = config;
     }
 

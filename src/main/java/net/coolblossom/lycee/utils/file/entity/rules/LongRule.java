@@ -3,10 +3,17 @@ package net.coolblossom.lycee.utils.file.entity.rules;
 import net.coolblossom.lycee.utils.file.entity.DataFileRule;
 
 public class LongRule implements DataFileRule<Long> {
+
+    boolean isPrimitive;
+
+    public LongRule(boolean isPrimitive) {
+        this.isPrimitive = isPrimitive;
+    }
+
     @Override
     public Long read(String column) {
         if (column == null || column.isEmpty()) {
-            return 0L;
+            return this.isPrimitive ? 0L : null;
         } else {
             return Long.parseLong(column);
         }

@@ -15,12 +15,17 @@ public class EnumRule implements DataFileRule<Object> {
 
     @Override
     public Object read(String column) {
+        if (column == null || column.isEmpty()) {
+            return null;
+        }
+
         Optional<?> enumValue = Arrays.stream(type.getEnumConstants())
                 .filter(e -> e.toString().equals(column))
                 .findFirst();
         if (enumValue.isEmpty()) {
             throw new IllegalArgumentException();
         }
+
         return enumValue.get();
     }
 

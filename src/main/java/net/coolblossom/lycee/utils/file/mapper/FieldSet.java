@@ -4,6 +4,9 @@ package net.coolblossom.lycee.utils.file.mapper;
  * 1レコード分のデータセット
  */
 public interface FieldSet {
+
+    int indexSize();
+
     /**
      * 存在確認
      * @param columnName カラム名
@@ -25,4 +28,7 @@ public interface FieldSet {
      */
     int getInt(String columnName);
 
+    String getStringAt(int index);
+
+    Integer getIntAt(int index);
 }

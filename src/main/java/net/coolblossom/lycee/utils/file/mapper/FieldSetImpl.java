@@ -26,6 +26,11 @@ public class FieldSetImpl implements FieldSet {
     }
 
     @Override
+    public int indexSize() {
+        return index.size();
+    }
+
+    @Override
     public boolean has(String columnName) {
         return index.containsKey(columnName);
     }
@@ -46,10 +51,14 @@ public class FieldSetImpl implements FieldSet {
     }
 
     @Override
-    public String toString() {
-        return "FieldSetImpl{" +
-                "dataList=" + dataList +
-                ", index=" + index +
-                '}';
+    public String getStringAt(int index) {
+        return dataList.get(index);
     }
+
+    @Override
+    public Integer getIntAt(int index) {
+        String value = getStringAt(index);
+        return Integer.parseInt(value);
+    }
+
 }

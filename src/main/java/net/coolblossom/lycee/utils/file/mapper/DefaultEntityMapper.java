@@ -12,21 +12,23 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @param <T> 対象クラス
  */
-public class DefaultEntityMapper<T> implements RecordMapper<T> {
+public abstract class DefaultEntityMapper<T> implements RecordMapper<T> {
     private final Class<T> target;
 
-    private final EntityDesc desc;
+    protected final EntityDesc<T> desc;
 
     public DefaultEntityMapper(Class<T> clazz) throws NoSuchMethodException {
         this.target = clazz;
-        this.desc = new EntityDesc(clazz);
+        this.desc = new EntityDesc<>(clazz);
     }
 
     @Override
-    public T map(FieldSet fs) {
-        T entity;
+    public T map(FieldSet fieldSet) {
+        final T entity;
         try {
             entity = target.getConstructor().newInstance();
+            bind(entity, fieldSet);
+            return entity;
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             // デフォルトコンストラクタが無いとき
             // 呼び出しに失敗した時
@@ -34,8 +36,7 @@ public class DefaultEntityMapper<T> implements RecordMapper<T> {
             // アクセス権限が無いとき
             throw new RecordMappingFailure(e);
         }
-
-        desc.bind(fs, entity);
-        return entity;
     }
+
+    abstract protected void bind(T target, FieldSet fieldSet) throws InvocationTargetException, IllegalAccessException;
 }

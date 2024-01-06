@@ -1,6 +1,6 @@
 package net.coolblossom.lycee.utils.file.exceptions;
 
-public class InvalidRecordException extends RuntimeException {
+public class InvalidRecordException extends DataFileException {
 
     public InvalidRecordException() {
         super();

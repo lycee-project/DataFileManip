@@ -5,9 +5,11 @@ import net.coolblossom.lycee.utils.file.mapper.DefaultEntityMapper;
 import net.coolblossom.lycee.utils.file.mapper.FieldSet;
 import net.coolblossom.lycee.utils.file.mapper.FieldSetImpl;
 import net.coolblossom.lycee.utils.file.mapper.RecordMapper;
+import net.coolblossom.lycee.utils.file.mapper.RecordMapperFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -44,7 +46,10 @@ public class DataFileReader<T>
     public DataFileReader(DataFileConfig config, String filename, Class<T> clazz)
             throws IOException, NoSuchMethodException {
         this.config = config;
-        this.mapper = new DefaultEntityMapper<>(clazz);
+
+        this.mapper = mapperFactory().createMapper(clazz);
+
+        // TODO Configの改行コードに応じて、RecordReaderを切り替える
         this.reader = new CrlfRecordReader(config, Paths.get(filename));
 
         if (this.config.hasHeader()) {
@@ -65,7 +70,11 @@ public class DataFileReader<T>
         return new DataFileReaderIterator();
     }
 
-    private T readOne() throws IOException {
+    private RecordMapperFactory mapperFactory() {
+        return new RecordMapperFactory();
+    }
+
+    private T readOne() throws IOException, InvocationTargetException, IllegalAccessException {
         switch (config.invalidRecord()) {
             case Null:
                 try {
@@ -172,6 +181,8 @@ public class DataFileReader<T>
                 return readOne();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new RecordMappingFailure(e);
             }
         }
     }
